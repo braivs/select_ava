@@ -37,8 +37,6 @@ export const SelectAva = () => {
                     setSelectedAvaBase64(reader.result as string)
                 }
             };
-            reader.onerror = (error) => {
-            }
         } catch {
             console.log('error in reader.readAsDataURL')
         }
@@ -52,6 +50,7 @@ export const SelectAva = () => {
     const cancelHandler = () => {
         setSelectedAvaBase64('')
         setIsEditMode(false)
+        setPictureZoom(1)
     }
 
     const saveHandler = () => {
@@ -59,6 +58,7 @@ export const SelectAva = () => {
         const croppedImg = canvasScaled.toDataURL();
         dispatch(selectAvaAC(croppedImg))
         setIsEditMode(false)
+        setPictureZoom(1)
     }
 
     const sliderHandler = (event: Event, newValue: number | number[]) => {
@@ -84,7 +84,7 @@ export const SelectAva = () => {
                         image={selectedAvaBase64 ? selectedAvaBase64 : defaultAva}
                         width={100}
                         height={100}
-                        border={50}
+                        border={20}
                         color={[255, 255, 255, 0.6]} // RGBA
                         scale={pictureZoom}
                         rotate={0}
@@ -96,6 +96,7 @@ export const SelectAva = () => {
                         max={10}
                         step={0.1}
                         onChange={sliderHandler}
+                        className={s.slider}
                     />
                 </div>
 
