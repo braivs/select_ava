@@ -9,6 +9,7 @@ import {selectAvaAC} from "./selectAva-reducer";
 export const SelectAva = () => {
 
     const [isEditMode, setIsEditMode] = useState(false)
+    const [error, setError] = useState(false)
     const [selectedAvaBase64, setSelectedAvaBase64] = useState('')
     const avatarFromState = useSelector<AppRootStateType, string>(state => state.ava.avatar)
     const inRef = useRef<HTMLInputElement>(null);
@@ -24,9 +25,10 @@ export const SelectAva = () => {
                 image.src = reader.result as string;
                 image.onload = () => {
                     if (image.width === 96 && image.height === 96) {
+                        setError(false)
                         setSelectedAvaBase64(reader.result as string)
                     }
-                    else console.log('Avatar must be 96x96px')
+                    else setError(true)
                 }
             };
             reader.onerror = (error) => {
@@ -37,15 +39,18 @@ export const SelectAva = () => {
     }
 
     const goToEditModeHandler = () => {
+        setSelectedAvaBase64(avatarFromState ? avatarFromState : defaultAva)
         setIsEditMode(true)
     }
 
     const cancelHandler = () => {
+        setSelectedAvaBase64('')
         setIsEditMode(false)
     }
 
     const saveHandler = () => {
         if (selectedAvaBase64) dispatch(selectAvaAC(selectedAvaBase64))
+        setSelectedAvaBase64('')
         setIsEditMode(false)
     }
 
@@ -64,6 +69,7 @@ export const SelectAva = () => {
                 ? (selectedAvaBase64 ? selectedAvaBase64 : defaultAva)
                 : (avatarFromState ? avatarFromState : defaultAva)
         } alt="defaultAva" className={s.img}/>
+        {isEditMode && error && <div className={s.error}>Avatar must be 96x96px</div>}
         {!isEditMode
             ? <Button variant="contained" onClick={goToEditModeHandler} className={s.button}>Edit</Button>
             : <div>
