@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useRef, useState} from 'react';
-import defaultAva from '../../assets/img/photo-profile.png'
-import {Button} from "@mui/material";
+import defaultAva from '../../assets/img/defaultAva.png'
+import {Button, Divider, Stack} from "@mui/material";
 import s from './SelectAva.module.scss'
 import {AppRootStateType} from "../../app/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -27,8 +27,7 @@ export const SelectAva = () => {
                     if (image.width === 96 && image.height === 96) {
                         setError(false)
                         setSelectedAvaBase64(reader.result as string)
-                    }
-                    else setError(true)
+                    } else setError(true)
                 }
             };
             reader.onerror = (error) => {
@@ -46,39 +45,49 @@ export const SelectAva = () => {
     const cancelHandler = () => {
         setSelectedAvaBase64('')
         setIsEditMode(false)
+        setError(false)
     }
 
     const saveHandler = () => {
         if (selectedAvaBase64) dispatch(selectAvaAC(selectedAvaBase64))
         setSelectedAvaBase64('')
         setIsEditMode(false)
+        setError(false)
     }
 
     return <div className={s.selectAva}>
-        <input
-            ref={inRef}
-            type={'file'}
-            accept=".jpg, .jpeg, .png"
-            style={{display: 'none'}}
-            onChange={upload}
-        /> {/*for select file dialog*/}
+        <Stack spacing={2} alignItems="center">
+            <input
+                ref={inRef}
+                type={'file'}
+                accept=".jpg, .jpeg, .png"
+                style={{display: 'none'}}
+                onChange={upload}
+            /> {/*for select file dialog*/}
 
-        <div>Hello, User! You can change you avatar by click edit button below.</div>
-        <img src={
-            isEditMode
-                ? (selectedAvaBase64 ? selectedAvaBase64 : defaultAva)
-                : (avatarFromState ? avatarFromState : defaultAva)
-        } alt="defaultAva" className={s.img}/>
-        {isEditMode && error && <div className={s.error}>Avatar must be 96x96px</div>}
-        {!isEditMode
-            ? <Button variant="contained" onClick={goToEditModeHandler} className={s.button}>Edit</Button>
-            : <div>
-                <Button variant="contained" onClick={cancelHandler}>Cancel</Button>
-                <Button variant="contained" onClick={() => inRef && inRef.current && inRef.current.click()}>Select new
-                    Avatar</Button>
-                <Button variant="contained" onClick={saveHandler}>Save</Button>
-            </div>
-        }
+            <div>Hello, User! Click edit to change you avatar.</div>
+            <div>Note: you avatar must be 96x96px.</div>
+            <img src={
+                isEditMode
+                    ? (selectedAvaBase64 ? selectedAvaBase64 : defaultAva)
+                    : (avatarFromState ? avatarFromState : defaultAva)
+            } alt="defaultAva" className={s.img}/>
+            {isEditMode && error && <div className={s.error}>Avatar must be 96x96px</div>}
+            {!isEditMode
+                ? <div><Button variant="contained" onClick={goToEditModeHandler}
+                                        className={s.button}>Edit</Button></div>
+                : <Stack direction={'row'}
+                         divider={<Divider orientation="vertical" flexItem className={s.divider}/>}
+                         spacing={2}>
+                    <Button variant="contained" onClick={cancelHandler} className={s.button}>Cancel</Button>
+                    <Button variant="contained"
+                                          onClick={() => inRef && inRef.current && inRef.current.click()}
+                                          className={s.button}>Select new Avatar</Button>
+                    <Button variant="contained" onClick={saveHandler} className={s.button}>Save</Button>
+                </Stack>
+            }
+        </Stack>
+
 
     </div>
 }

@@ -1,16 +1,30 @@
 .selectAva {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Mochiy Pop P One', sans-serif;
+  font-size: 24px;
 
   .img {
     width: 96px;
   }
 
   .button{
-    width: 100px;
+    //width: 100px;
+    background: orange;
+
+    &:hover {
+      background: darkorange;
+    }
   }
 
   .error {
     color: red;
+  }
+
+  .divider {
+    border-width: 2px;
+    border-color: darkorange;
   }
 }
