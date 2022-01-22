@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useRef, useState} from 'react';
 import defaultAva from '../../assets/img/defaultAva.png'
-import {Button, Divider, Stack} from "@mui/material";
+import {Button, Divider, Slider, Stack} from "@mui/material";
 import s from './SelectAva.module.scss'
 import {AppRootStateType} from "../../app/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -11,6 +11,7 @@ export const SelectAva = () => {
 
     const [isEditMode, setIsEditMode] = useState(false)
     const [selectedAvaBase64, setSelectedAvaBase64] = useState('')
+    const [pictureZoom, setPictureZoom] = useState(1)
 
     const avatarFromState = useSelector<AppRootStateType, string>(state => state.ava.avatar)
 
@@ -60,6 +61,10 @@ export const SelectAva = () => {
         setIsEditMode(false)
     }
 
+    const sliderHandler = (event: Event, newValue: number | number[]) => {
+        setPictureZoom(newValue as number)
+    }
+
     return <div className={s.selectAva}>
         <Stack spacing={2} alignItems="center">
             <input
@@ -73,16 +78,27 @@ export const SelectAva = () => {
             <div>Hello, User! Click edit to change you avatar.</div>
             {!isEditMode
                 ? <img src={avatarFromState ? avatarFromState : defaultAva} alt="defaultAva" className={s.img}/>
-                : <AvatarEditor
-                    ref={setEditorRef}
-                    image={selectedAvaBase64 ? selectedAvaBase64 : defaultAva}
-                    width={100}
-                    height={100}
-                    border={50}
-                    color={[255, 255, 255, 0.6]} // RGBA
-                    scale={1.2}
-                    rotate={0}
-                />
+                : <div>
+                    <AvatarEditor
+                        ref={setEditorRef}
+                        image={selectedAvaBase64 ? selectedAvaBase64 : defaultAva}
+                        width={100}
+                        height={100}
+                        border={50}
+                        color={[255, 255, 255, 0.6]} // RGBA
+                        scale={pictureZoom}
+                        rotate={0}
+                    />
+                    <Slider
+                        aria-label="raceSlider"
+                        value={pictureZoom}
+                        min={1}
+                        max={10}
+                        step={0.1}
+                        onChange={sliderHandler}
+                    />
+                </div>
+
             }
             {!isEditMode
                 ? <div><Button variant="contained" onClick={goToEditModeHandler}
